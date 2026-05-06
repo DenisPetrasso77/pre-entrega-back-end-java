@@ -10,10 +10,10 @@ import java.util.Scanner;
 public class Pedido {
 
 
-    private Cliente cliente;
+    private final Cliente cliente;
     public List<LineaPedido> lineas = new ArrayList<>(); //Traigo linea de pedido y armo un array
     private final List<String> historialVentas = new ArrayList<>(); //creo un ArrayList
-    int contadorVentas = 1;
+    int contadorVentas = 0;
 
     // el constructor para que el pedido SIEMPRE necesite un cliente al nacer
     public Pedido(Cliente cliente) {
@@ -24,10 +24,6 @@ public class Pedido {
 
         if (p.getStock() >= cant) {
             lineas.add(new LineaPedido(p, cant));
-
-            p.setStock(p.getStock() - cant);
-
-            System.out.println("Producto agregado al pedido.");
             
         } else {
             System.out.println("No hay stock suficiente.");
@@ -56,7 +52,10 @@ public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
             }
             // Si no falla anda entra aca, hay stock. Procedemos:
             this.agregarAlPedido(p, cant); 
-            System.out.println("Producto añadido al pedido con éxito.");
+            System.out.println("Producto: " + p.nombre + " Cantidad Pedida: " + cant);
+            System.out.println("\nProducto añadido al pedido con éxito.");
+            System.out.println("\nPresione Enter para continuar...");
+            leer.nextLine();
             
         } catch (StockInsuficienteException e) {
 
@@ -74,7 +73,7 @@ public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
     public void realizarVenta(Scanner leer) {
     System.out.println("\n========================================");
     System.out.println("           RESUMEN DEL PEDIDO           ");
-    // USAMOS EL OBJETO CLIENTE AQUÍ:
+    System.out.println("\n========================================");
     System.out.println("Cliente: " + this.cliente.getNombre()); 
     System.out.println("========================================");
 
@@ -86,21 +85,29 @@ public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
         for (LineaPedido lp : lineas) {
             // Mostramos los datos de la línea
             System.out.println("Producto: " + lp.producto.nombre);
-            System.out.println("Cantidad: " + lp.cantidad + " | Subtotal: $" + lp.calcularSubtotal());
+            System.out.println("Cantidad: " + lp.cantidad);   
+            System.out.println("Subtotal: $" + String.format("%.2f", lp.calcularSubtotal()));  
             System.out.println("----------------------------------------");
             
             // Vamos sumando al total
             totalGeneral += lp.calcularSubtotal();
         }
 
-            System.out.println("TOTAL A PAGAR: $" + totalGeneral);
-            System.out.println("Desea realizar la venta? (S/N)");
+            System.out.println("TOTAL A PAGAR: $" + String.format("%.2f", totalGeneral));
+            System.out.println("\nNOTA: solo por este MES Las Bebidas tiene un 5% de descuento y las Comidas un 15% de descuento");
+            System.out.println("\nDesea realizar la venta? (S/N)");
             String respuesta = leer.nextLine();
-            if (respuesta.equals("s")) {
+            if (respuesta.equalsIgnoreCase("s")) {
 
+                for (LineaPedido lp : lineas) {
+                // Accedemos al objeto producto dentro de la línea y bajamos su stock
+                lp.producto.setStock(lp.producto.getStock() - lp.cantidad);
+            }
+            contadorVentas++;
             // HISTORIAL           
             String registro = "Venta #" + contadorVentas + " | Cliente: " + cliente.getNombre() + 
-                    " | Items: " + lineas.size() + " | Total: $" + totalGeneral;
+                    " | Items: " + lineas.size() + " | Total: $" + totalGeneral;         
+
             historialVentas.add(registro);
 
             lineas.clear();
@@ -108,12 +115,11 @@ public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
             System.out.println("Venta Realizada con Éxito!");
             System.out.println("\nPresione Enter para continuar...");
             leer.nextLine();
-
-            contadorVentas ++;
-
             }
-    }
-    System.out.println("========================================\n");
+        }
+            lineas.clear(); // Opcional: limpia el carrito si el cliente se arrepintió
+            System.out.println("No hay ningun pedido realizado");
+            System.out.println("========================================\n");
     }
 
     public void mostrarPedidosRealizados() {

@@ -1,7 +1,7 @@
 package com.techlab.productos;
 import com.techlab.excepciones.StockInsuficienteException;
 
-public class Producto {
+public abstract class Producto {
         private static int contadorId = 1;
         public String nombre;
         public double precio;
@@ -53,11 +53,9 @@ public class Producto {
         public static double calcularDescuentoGeneral(double precioOriginal) {
             return precioOriginal * 0.90;
         }
-
-        public double calcularPrecioFinal() { 
-        // Ahora usamos las variables de la propia instancia (this)
-        return this.precio * this.stock; 
-        }
+        
+        //cada hija tiene que redefinir el metodo propio
+        public abstract double calcularPrecioFinal();
 
         public void mostrarInformacion() {
         System.out.println("Producto: " + nombre + " | Stock actual: " + stock);

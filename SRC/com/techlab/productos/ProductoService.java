@@ -91,19 +91,30 @@ public class ProductoService {
     System.out.println("Bebida '" + nom + "' agregada con éxito.");
 
 } else if (categoria.equals("C")) {
+    
+      System.out.println("¿El producto tiene Fecha de Vencimiento? (s/n): ");
+        String respuesta = leer.nextLine();
 
-        System.out.print("Fecha de vencimiento (dd/mm/aaaa): ");
-        String fecha = leer.nextLine();
+        // Comparamos si la respuesta es "s" (ignorando mayúsculas)
+        if (respuesta.equalsIgnoreCase("s")) {
+            System.out.print("Fecha de vencimiento (dd/mm/aaaa): ");
+            String fecha = leer.nextLine();
 
-        // Mientras NO sean solo números y barras, pide de nuevo
-        while (!fecha.matches("[0-9/]+")) {
-            System.out.print("Error. Ingrese solo números y barras: ");
-            fecha = leer.nextLine();
+            while (!fecha.matches("[0-9/]+")) {
+                System.out.print("Error. Ingrese solo números y barras: ");
+                fecha = leer.nextLine();
+            }
+            
+            // Si tiene fecha, creamos la Comida con esa fecha
+            lista.add(new Comida(nom, pre, st, fecha));
+            System.out.println("Comida '" + nom + "' agregada con éxito.");
+
+        } else {
+            // Si el usuario pone "n" o cualquier otra cosa, "sigue de largo" por aquí
+            // Aquí puedes agregar el producto con una fecha por defecto o como producto base
+            lista.add(new Comida(nom, pre, st, "Sin fecha")); 
+            System.out.println("Producto agregado sin fecha de vencimiento.");
         }
-        // al final de todas las validaciones agregadmos el producto al array
-        lista.add(new Comida(nom, pre, st, fecha));
-        System.out.println("Comida '" + nom + "' agregada con éxito.");
-
     }
 }
     
@@ -134,7 +145,7 @@ public class ProductoService {
 }
 
 public static void buscarActualizarProducto(Scanner leer, List<Producto> lista) {
-    System.out.print("Nombre o ID del producto a buscar: ");
+    System.out.print("Nombre del producto a buscar: ");
     String criterio = leer.nextLine();
 
     Producto encontrado = buscarProducto(lista, criterio);

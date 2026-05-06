@@ -1,7 +1,7 @@
 package com.techlab.pedidos;
 import com.techlab.productos.Producto; 
 
-// UN TICKET CON PRODUCTO Y CANTIDAD
+    // UN TICKET CON PRODUCTO Y CANTIDAD
 public class LineaPedido {
 
     public Producto producto;
@@ -14,7 +14,8 @@ public class LineaPedido {
     }
 
     public double calcularSubtotal() {
-        // Usamos .precio porque en tu Producto es público
-        return this.producto.precio * this.cantidad;
+    // Ahora LineaPedido usa la lógica interna del producto
+    return this.producto.calcularPrecioFinal() * this.cantidad;
+
     }
 }

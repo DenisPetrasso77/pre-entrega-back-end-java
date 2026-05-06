@@ -9,36 +9,33 @@ package com.techlab.clientes;
         public  String nombre;
         public  String email;
 
-        public void setEmail(String email) {
-        if (email.contains("@")) {
-            this.email = email;
-        } else {
-            this.email = "inválido";
-        }
-    }
+        public final void setEmail(String email) {
 
-       // Agregamos esto para que otras clases puedan "pedirle" el nombre
+            if (email.contains("@")) {
+                this.email = email;
+                } else {
+                this.email = "inválido";
+                }
+        }
+
+        //getter
         public String getNombre() {
             return this.nombre;
         }
 
+        //constructor
         public Cliente(String nombre, String email) {
+
             this.id = contadorId++;
             this.nombre = nombre;
-            if (email.contains("@")) {
-                this.email = email;
-            } else {
-                this.email = "Email no válido (falta @)";
-                System.out.println("Error: El email de " + nombre + " es incorrecto.");
-            }
+            setEmail(email);
+           
         }
-
 
         public void saludar(String nombre) {
 
             System.out.println("Hola " + nombre + " Bienvenido al Sistema Techlab!!!" );
         }
-
         @Override
         public String toString() {
             return "Cliente: " + this.nombre + " | Email: " + this.email;

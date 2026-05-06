@@ -1,5 +1,6 @@
 package com.techlab.productos;
 
+
  // ---CLASE BEBIDA ---
     public  class Bebida extends Producto implements Descontable {
     private double volumenEnLitros;
@@ -21,7 +22,7 @@ package com.techlab.productos;
         this.volumenEnLitros = 0;
     }
 }
-
+        // OBLIGACIÓN Viene de la clase abstracta padre 
         @Override 
         public double calcularPrecioFinal() { 
             // Aplicamos el 5% de descuento sobre el cálculo base
