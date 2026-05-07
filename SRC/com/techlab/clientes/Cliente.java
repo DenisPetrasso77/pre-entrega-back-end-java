@@ -3,7 +3,7 @@ package com.techlab.clientes;
 
 // --- Clase Cliente que voy a usar mas adelante ---
     public class Cliente {
-
+        
         private static int contadorId = 1;
         private int id;
         public  String nombre;

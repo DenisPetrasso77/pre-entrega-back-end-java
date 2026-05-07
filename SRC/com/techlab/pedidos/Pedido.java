@@ -115,11 +115,13 @@ public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
             System.out.println("Venta Realizada con Éxito!");
             System.out.println("\nPresione Enter para continuar...");
             leer.nextLine();
-            }
-        }
+            } else {
             lineas.clear(); // Opcional: limpia el carrito si el cliente se arrepintió
             System.out.println("No hay ningun pedido realizado");
+            }
+            
             System.out.println("========================================\n");
+        }
     }
 
     public void mostrarPedidosRealizados() {

@@ -20,11 +20,10 @@ public class Main {
         Pedido miPedido = new Pedido(clienteDefault); 
         int opcion = 0; //variable que usa el switch
         System.out.println("\n");
-        clienteDefault.saludar("Denis");
 
 
         do {
-            System.out.println("\n================ SISTEMA DE GESTIÓN - TECHLAB ================");
+            System.out.println("\n================ Bienvenido al SISTEMA DE GESTIÓN ================");
             System.out.println("1) Agregar producto");
             System.out.println("2) Listar productos");
             System.out.println("3) Buscar/Actualizar producto");
@@ -76,9 +75,7 @@ public class Main {
                 default:
                     System.out.println("Opción no válida.");
                     System.out.println("\nPresione Enter para continuar...");
-                    leer.nextLine();
-
-                    
+                    leer.nextLine();                  
             }
         } while (opcion != 8); // Repite mientras no elija 7
 
