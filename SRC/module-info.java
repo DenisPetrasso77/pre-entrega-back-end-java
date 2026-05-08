@@ -5,4 +5,5 @@ module com.techlab.negocio {
     exports com.techlab.excepciones;
     exports com.techlab.clientes;
     exports com.techlab.principal;
+    exports com.techlab.util;
 }

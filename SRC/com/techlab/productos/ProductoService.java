@@ -1,5 +1,7 @@
 package com.techlab.productos;
 
+import com.techlab.excepciones.StockInsuficienteException;
+import com.techlab.util.ConsolaUtils;
 import java.util.List;
 import java.util.Scanner;
 
@@ -7,146 +9,69 @@ public class ProductoService {
 
     // Agregar producto
     public static void agregarProducto(Scanner leer, List<Producto> lista) {
-
     System.out.println("\n--- Agregar Nuevo Producto ---");
 
-    String categoria = "";
-    boolean categoriaValida = false;
-
-    // VALIDACIÓN INICIAL: No lo dejamos pasar de acá si no es B o C
-    while (!categoriaValida) {
-        System.out.print("¿Es una Bebida o una Comida? (B/C): ");
-        categoria = leer.nextLine().toUpperCase();
-        
-        if (categoria.equals("B") || categoria.equals("C")) {
-            categoriaValida = true;
-        } else {
-            System.err.println("Error: Categoría no válida. Ingrese 'B' para Bebida o 'C' para Comida.");
-            System.out.println("\nPresione Enter para continuar...");
-            leer.nextLine();
-        }
-    }
-
+    // 1. Nombre
     System.out.print("Nombre: ");
-    String nom = leer.nextLine();
+    String nom = ConsolaUtils.leerTexto(leer);
 
+    // 2. Precio
     System.out.print("Precio: ");
-        while(!leer.hasNextDouble()) {
-            System.err.println("Error: El precio debe ser un numero");
-            System.out.print("Reintente el Precio: ");
-            leer.nextLine();
-        }
-    double pre = leer.nextDouble();
-    leer.nextLine();
-
-    System.out.print("Stock inicial: ");
-
-    // chequeaamos el número
-    while (!leer.hasNextInt()) {
-        System.err.println("Error: El Stock debe ser un número entero.");
-        System.out.print("Reintente el Stock: ");
-        leer.nextLine(); 
-    }
-    // variable temporal para chequear el valor
-    int st = leer.nextInt();
-
-    // Si el número es negativo
-    while (st < 0) {
-        System.err.println("Error: El Stock no puede ser menor a cero.");
-        System.out.print("Ingrese un Stock válido (0 o más): ");
-        
-        // Repetimos la lógica de validación de entero por si ahora pone letras
-        while (!leer.hasNextInt()) {
-            System.err.println("Error: Debe ser un número entero.");
-            leer.nextLine();
-        }
-        st = leer.nextInt();
-    }
-
-    leer.nextLine(); // Limpieza final
-
-    //Validamos los atributos de cada uno
-   if (categoria.equals("B")) {
-
-    System.out.print("Volumen en litros (ej: 0.5): ");
-    
-    // VALIDACIÓN: Mientras lo que escriba NO sea un número (double)
     while (!leer.hasNextDouble()) {
-        System.err.println("Error: El volumen debe ser un número (ej: 0.5).");
-        System.out.print("Reintente el Volumen: ");
-        leer.nextLine(); // Limpiamos el buffer para que pueda intentar de nuevo
+        System.err.print("Error: Ingrese un número: ");
+        leer.nextLine();
     }
-    
-    double vol = leer.nextDouble();
-    leer.nextLine(); // Limpieza necesaria después de nextDouble()
+    double pre = leer.nextDouble();
 
-    // Si además querés validar que no sea negativo, podés sumar este if:
-    if (vol <= 0) {
-        System.out.println("Cuidado: El volumen debe ser mayor a 0. Se asignará 0.1L por defecto.");
-        vol = 0.1;
+    // 3. Stock
+    System.out.print("Stock inicial: ");
+    while (!leer.hasNextInt()) {
+        System.err.print("Error: Ingrese un entero: ");
+        leer.nextLine();
     }
+    int st = leer.nextInt();
+    leer.nextLine(); // Limpieza de buffer
+
+    // 4. Menú de Categorías
+    System.out.println("\nSeleccione la Categoría:");
+    System.out.println("1) Bebida\n2) Comida\n3) Limpieza\n4) Perfumería\n5) Otros");
+    System.out.print("Opción: ");
     
-    // Ahora sí, agregamos con el dato seguro
-    lista.add(new Bebida(nom, pre, st, vol));
-    System.out.println("Bebida '" + nom + "' agregada con éxito.");
+    String opcion = ConsolaUtils.leerTexto(leer);
+    String cat;
 
-} else if (categoria.equals("C")) {
-    
-      System.out.println("¿El producto tiene Fecha de Vencimiento? (s/n): ");
-        String respuesta = leer.nextLine();
-
-        // Comparamos si la respuesta es "s" (ignorando mayúsculas)
-        if (respuesta.equalsIgnoreCase("s")) {
-            System.out.print("Fecha de vencimiento (dd/mm/aaaa): ");
-            String fecha = leer.nextLine();
-
-            while (!fecha.matches("[0-9/]+")) {
-                System.out.print("Error. Ingrese solo números y barras: ");
-                fecha = leer.nextLine();
-            }
-            
-            // Si tiene fecha, creamos la Comida con esa fecha
-            lista.add(new Comida(nom, pre, st, fecha));
-            System.out.println("Comida '" + nom + "' agregada con éxito.");
-
-        } else {
-            // Si el usuario pone "n" o cualquier otra cosa, "sigue de largo" por aquí
-            // Aquí puedes agregar el producto con una fecha por defecto o como producto base
-            lista.add(new Comida(nom, pre, st, "Sin fecha")); 
-            System.out.println("Producto agregado sin fecha de vencimiento.");
-        }
+    switch (opcion) {
+        case "1" -> cat = "Bebida";
+        case "2" -> cat = "Comida";
+        case "3" -> cat = "Limpieza";
+        case "4" -> cat = "Perfumería";
+        default  -> cat = "Otros";
     }
+
+
+    lista.add(new Producto(nom, pre, st,cat) {
+
+}); 
+
+    System.out.println("Producto '" + nom + "' agregado con éxito como " + cat + ".");
 }
     
-   public static void listarProductos(Scanner leer, List<Producto> listaProducto) {
+    public static void listarProductos(Scanner leer, List<Producto> listaProducto) {
     System.out.println("\n========== INVENTARIO DISPONIBLE ==========");
         
     for (Producto p : listaProducto) {
-        // 1. Empezamos con los datos comunes que tienen todos
-        String info = "ID: " + p.id + " | Nombre: " + p.nombre + " | Precio: $" + p.precio + " | Stock: " + p.stock;
-
-        // 2. Verificamos si es Bebida para sumar el volumen
-        if (p instanceof Bebida) {
-            Bebida b = (Bebida) p; // Casting a Bebida
-            info += " | Volumen: " + b.getVol() + "L";
-        } 
-        // 3. Verificamos si es Comida para sumar la fecha
-        else if (p instanceof Comida) {
-            Comida c = (Comida) p; // Casting a Comida
-            info += " | Vencimiento: " + c.getFechaVencimiento();
-        }
-
-        // 4. Imprimimos la línea completa
-        System.out.println(info);
+        // En lugar de escribir toda la tira de texto, llamamos al objeto
+        // Java llama automáticamente al toString() cuando hacés esto:
+        System.out.println(p); 
     }
 
     System.out.println("\nPresione Enter para continuar...");
     leer.nextLine();
 }
 
-public static void buscarActualizarProducto(Scanner leer, List<Producto> lista) {
+    public static void buscarActualizarProducto(Scanner leer, List<Producto> lista) {
     System.out.print("Nombre del producto a buscar: ");
-    String criterio = leer.nextLine();
+    String criterio = ConsolaUtils.leerTexto(leer);
 
     Producto encontrado = buscarProducto(lista, criterio);
 
@@ -160,7 +85,7 @@ public static void buscarActualizarProducto(Scanner leer, List<Producto> lista) 
         System.out.println("3. Cancelar");
         System.out.print("Elija una opción: ");
         
-        String opcion = leer.nextLine();
+        String opcion = ConsolaUtils.leerTexto(leer);
 
         switch (opcion) {
             case "1":
@@ -207,7 +132,7 @@ public static void buscarActualizarProducto(Scanner leer, List<Producto> lista) 
     }
 }
 
-public static Producto buscarProducto(List<Producto> lista, String criterio) {
+    public static Producto buscarProducto(List<Producto> lista, String criterio) {
     for (Producto p : lista) {
         if (p.nombre.equalsIgnoreCase(criterio)) {
             return p;
@@ -216,17 +141,17 @@ public static Producto buscarProducto(List<Producto> lista, String criterio) {
     return null;
 }
 
-   public static void eliminarProducto(List<Producto> listaProducto, Scanner leer) {
+    public static void eliminarProducto(List<Producto> listaProducto, Scanner leer) {
 
     System.out.print("Ingrese nombre del producto a eliminar: ");
-    String producto = leer.nextLine();
+    String producto = ConsolaUtils.leerTexto(leer);
                         
     for (int i = 0; i < listaProducto.size(); i++) {
         Producto p = listaProducto.get(i);
 
         if (p.nombre.equalsIgnoreCase(producto)) {
             System.err.println("¿Está seguro que desea eliminar este producto? (S/N)");
-            String respuesta = leer.nextLine();
+            String respuesta = ConsolaUtils.leerTexto(leer);
 
             if (respuesta.equalsIgnoreCase("s")) {
 
@@ -243,5 +168,30 @@ public static Producto buscarProducto(List<Producto> lista, String criterio) {
     System.out.println("\nPresione Enter para continuar...");
     leer.nextLine();
    }
+
+    public static void realizarVenta(Producto p, int cantidadAVender) throws StockInsuficienteException {
+            
+    // validación
+    if (cantidadAVender > p.getStock()) {
+    throw new StockInsuficienteException("Error: No hay stock suficiente de " + p.nombre + 
+    ". Solicitado: " + cantidadAVender + 
+                " | Disponible: " + p.getStock());
+    }
+    // si hay stock vendo
+    int stockActual = p.getStock();
+    p.setStock(stockActual - cantidadAVender);
+    System.out.println("Venta exitosa: " + cantidadAVender + " unidad(es) de " + p.nombre);
+    }
+
+    public static void actualizarDatos(Producto p, String nuevoNombre, double nuevoPrecio, int nuevoStock) {
+    // Usamos el objeto 'p' que recibimos por parámetro
+        p.nombre = nuevoNombre; 
+        p.setPrecio(nuevoPrecio);
+        p.setStock(nuevoStock);
+        
+    System.out.println("Producto Actualizado: " + p.nombre);
+    }
+
+        
 }
 

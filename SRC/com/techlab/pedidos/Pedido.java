@@ -3,6 +3,7 @@ import com.techlab.clientes.Cliente;
 import com.techlab.excepciones.StockInsuficienteException;
 import com.techlab.productos.Producto;
 import com.techlab.productos.ProductoService;
+import com.techlab.util.ConsolaUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -20,21 +21,11 @@ public class Pedido {
         this.cliente = cliente;
     }
 
-    public void agregarAlPedido(Producto p, int cant) {
-
-        if (p.getStock() >= cant) {
-            lineas.add(new LineaPedido(p, cant));
-            
-        } else {
-            System.out.println("No hay stock suficiente.");
-        }
-    }
-
-public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
+    public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
 
     System.out.println("\n--- Nuevo Pedido para: " + this.cliente.getNombre() + " ---");
     System.out.print("Ingrese el nombre: ");
-    String criterio = leer.nextLine();
+    String criterio = ConsolaUtils.leerTexto(leer);    
     Producto p = ProductoService.buscarProducto(inventario, criterio);
 
     if (p != null) {
@@ -51,7 +42,12 @@ public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
                         "Disponible: " + p.getStock() + " | Solicitado: " + cant);
             }
             // Si no falla anda entra aca, hay stock. Procedemos:
-            this.agregarAlPedido(p, cant); 
+            // 1. Empaquetamos el producto y la cantidad
+            LineaPedido item = new LineaPedido(p, cant);
+
+            // 2. Lo guardamos en la lista que declaraste arriba
+            this.lineas.add(item);
+
             System.out.println("Producto: " + p.nombre + " Cantidad Pedida: " + cant);
             System.out.println("\nProducto añadido al pedido con éxito.");
             System.out.println("\nPresione Enter para continuar...");
@@ -73,56 +69,62 @@ public void crearPedidoMenu(Scanner leer, List<Producto> inventario) {
     public void realizarVenta(Scanner leer) {
     System.out.println("\n========================================");
     System.out.println("           RESUMEN DEL PEDIDO           ");
-    System.out.println("\n========================================");
-    System.out.println("Cliente: " + this.cliente.getNombre()); 
+    System.out.println("========================================");
+    System.out.println("Cliente: " + this.cliente.getNombre());
     System.out.println("========================================");
 
     if (lineas.isEmpty()) {
         System.out.println("El pedido no tiene productos todavía.");
-    } else {
-        double totalGeneral = 0;
+        return; // Salimos temprano si no hay nada que vender
+    }
+    // Aplico los decuentos
+    double totalGeneral = 0;
+    for (LineaPedido lp : lineas) {
+        double subtotal = lp.calcularSubtotal();    
+        totalGeneral += subtotal;
+                // Imprimo el subtotal ya rebajado
 
-        for (LineaPedido lp : lineas) {
-            // Mostramos los datos de la línea
-            System.out.println("Producto: " + lp.producto.nombre);
-            System.out.println("Cantidad: " + lp.cantidad);   
-            System.out.println("Subtotal: $" + String.format("%.2f", lp.calcularSubtotal()));  
-            System.out.println("----------------------------------------");
-            
-            // Vamos sumando al total
-            totalGeneral += lp.calcularSubtotal();
-        }
+        System.out.println("Producto: " + lp.producto.nombre + 
+                        " | Cantidad: " + lp.cantidad + 
+                        " | Subtotal (c/desc): $" + String.format("%.2f", subtotal));
+    }
+        System.out.println("TOTAL A PAGAR: $" + String.format("%.2f", totalGeneral));
+        System.out.println("\nNOTA: Las Bebidas tienen un 5% y las Comidas un 15% de descuento (aplicado en subtotal)");
+        System.out.print("\n¿Desea confirmar la venta? (S/N): ");
+        String respuesta = ConsolaUtils.leerTexto(leer);
 
-            System.out.println("TOTAL A PAGAR: $" + String.format("%.2f", totalGeneral));
-            System.out.println("\nNOTA: solo por este MES Las Bebidas tiene un 5% de descuento y las Comidas un 15% de descuento");
-            System.out.println("\nDesea realizar la venta? (S/N)");
-            String respuesta = leer.nextLine();
-            if (respuesta.equalsIgnoreCase("s")) {
-
-                for (LineaPedido lp : lineas) {
-                // Accedemos al objeto producto dentro de la línea y bajamos su stock
-                lp.producto.setStock(lp.producto.getStock() - lp.cantidad);
+    if (respuesta.equalsIgnoreCase("s")) {
+        try {
+            // PROCESAMOS EL STOCK USANDO EL SERVICE
+            for (LineaPedido lp : lineas) {
+                // Llamamos al método estático del Service
+                ProductoService.realizarVenta(lp.producto, lp.cantidad);
             }
+
+            // Si llegamos acá, es porque todas las ventas fueron exitosas (no saltó el catch)
             contadorVentas++;
-            // HISTORIAL           
             String registro = "Venta #" + contadorVentas + " | Cliente: " + cliente.getNombre() + 
-                    " | Items: " + lineas.size() + " | Total: $" + totalGeneral;         
+                              " | Items: " + lineas.size() + " | Total: $" + String.format("%.2f", totalGeneral);
 
             historialVentas.add(registro);
+            lineas.clear(); // Limpiamos el carrito después del éxito
 
-            lineas.clear();
-
-            System.out.println("Venta Realizada con Éxito!");
-            System.out.println("\nPresione Enter para continuar...");
-            leer.nextLine();
-            } else {
-            lineas.clear(); // Opcional: limpia el carrito si el cliente se arrepintió
-            System.out.println("No hay ningun pedido realizado");
-            }
+            System.out.println("\n¡Venta Realizada con Éxito!");
             
-            System.out.println("========================================\n");
+        } catch (StockInsuficienteException e) {
+            // Si algún producto se quedó sin stock justo antes de confirmar
+            System.err.println("\n[ERROR CRÍTICO] La venta falló: " + e.getMessage());
+            System.out.println("El pedido se mantendrá pendiente para revisión.");
         }
+    } else {
+        lineas.clear();
+        System.out.println("Venta cancelada. Se ha vaciado el pedido.");
     }
+
+    System.out.println("\nPresione Enter para continuar...");
+    leer.nextLine();
+    System.out.println("========================================\n");
+}
 
     public void mostrarPedidosRealizados() {
         System.out.println("\n========== HISTORIAL DE VENTAS ==========");

@@ -1,7 +1,7 @@
 package com.techlab.pedidos;
 import com.techlab.productos.Producto; 
 
-    // UN TICKET CON PRODUCTO Y CANTIDAD
+// UN TICKET CON PRODUCTO Y CANTIDAD
 public class LineaPedido {
 
     public Producto producto;
@@ -14,8 +14,15 @@ public class LineaPedido {
     }
 
     public double calcularSubtotal() {
-    // Ahora LineaPedido usa la lógica interna del producto
-    return this.producto.calcularPrecioFinal() * this.cantidad;
-
+    double precioBase = this.producto.precio;
+    
+    // Aplicamos los descuentos aquí mismo para que el objeto sea "inteligente"
+    if (this.producto.categoria.equals("Bebida")) {
+        precioBase *= 0.95; // 5% descuento
+    } else if (this.producto.categoria.equals("Comida")) {
+        precioBase *= 0.85; // 15% descuento
     }
+
+    return precioBase * this.cantidad;
+}
 }

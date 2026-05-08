@@ -2,8 +2,8 @@ package com.techlab.principal;
 import com.techlab.clientes.Cliente;
 import com.techlab.pedidos.Pedido;
 import com.techlab.productos.*;
+import com.techlab.util.ConsolaUtils;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -36,15 +36,16 @@ public class Main {
        
             //Manejo de errores
             try {
-                opcion = leer.nextInt();
-                leer.nextLine(); // Limpieza 
+                String entrada = ConsolaUtils.leerTexto(leer);
 
-                } catch (InputMismatchException e) {
-
-                System.out.println("Error: Debe ingresar un número del 1 al 8.");
-                leer.nextLine(); //limpio
-
-                }
+                opcion = Integer.parseInt(entrada);
+                } 
+            catch (NumberFormatException e) { 
+                
+                System.out.println("\n[!] Error: '" + e.getMessage() + "' no es un número válido.");
+                System.out.println("Por favor, elija una opción del 1 al 8.");
+                opcion = 0;
+            }
 
             switch (opcion) { 
 
