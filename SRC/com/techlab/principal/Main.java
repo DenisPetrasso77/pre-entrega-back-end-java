@@ -68,7 +68,7 @@ public class Main {
                     miPedido.realizarVenta(leer);
                     break;
                 case 7:
-                    miPedido.mostrarPedidosRealizados(leer);
+                    miPedido.mostrarPedidosRealizados(ler);
                     break;
                   case 8:
                     System.out.println("Saliendo del sistema... ¡Chau!");

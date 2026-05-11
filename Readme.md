@@ -50,5 +50,5 @@ El sistema está organizado bajo el paquete raíz `com.techlab` y se divide en l
 2. **Abre el proyecto** en Visual Studio Code o cualquier IDE de Java.
 3. **Asegúrate** de tener configurado el JDK 11 o superior.
 4. **Ejecuta** la clase `Main.java` ubicada en `src/com/techlab/principal/`.
-5. **Presionar Run Java**
+5. **Presionar el boton "Run Java" del Visual Studio Code**
 
