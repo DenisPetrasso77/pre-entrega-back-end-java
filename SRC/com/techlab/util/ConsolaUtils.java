@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class ConsolaUtils {
 
+//Validaciones: Saco los espacios y valido que no esté vacio, luego Capitalizo
 public static String leerTexto(Scanner leer) { 
     String resultado;
     do {

@@ -49,13 +49,11 @@ public class ProductoService {
     }
 
 
-    lista.add(new Producto(nom, pre, st,cat) {
-
-}); 
+    lista.add(new Producto(nom, pre, st,cat)); 
 
     System.out.println("Producto '" + nom + "' agregado con éxito como " + cat + ".");
 }
-    
+    // Ver Prodcutos cargador
     public static void listarProductos(Scanner leer, List<Producto> listaProducto) {
     System.out.println("\n========== INVENTARIO DISPONIBLE ==========");
         
@@ -68,7 +66,7 @@ public class ProductoService {
     System.out.println("\nPresione Enter para continuar...");
     leer.nextLine();
 }
-
+    //Buscar y actualizar productos
     public static void buscarActualizarProducto(Scanner leer, List<Producto> lista) {
     System.out.print("Nombre del producto a buscar: ");
     String criterio = ConsolaUtils.leerTexto(leer);
@@ -131,7 +129,7 @@ public class ProductoService {
         leer.nextLine();
     }
 }
-
+    //Solo buscar Prodcutos
     public static Producto buscarProducto(List<Producto> lista, String criterio) {
     for (Producto p : lista) {
         if (p.nombre.equalsIgnoreCase(criterio)) {
@@ -140,7 +138,7 @@ public class ProductoService {
     }
     return null;
 }
-
+    //Eliminar Productos
     public static void eliminarProducto(List<Producto> listaProducto, Scanner leer) {
 
     System.out.print("Ingrese nombre del producto a eliminar: ");
@@ -168,30 +166,20 @@ public class ProductoService {
     System.out.println("\nPresione Enter para continuar...");
     leer.nextLine();
    }
-
-    public static void realizarVenta(Producto p, int cantidadAVender) throws StockInsuficienteException {
+    //Vender los pedidos Soplicitados   
+    public static void descontarStock(Producto p, int descontarStock) throws StockInsuficienteException {
             
     // validación
-    if (cantidadAVender > p.getStock()) {
+    if (descontarStock > p.getStock()) {
     throw new StockInsuficienteException("Error: No hay stock suficiente de " + p.nombre + 
-    ". Solicitado: " + cantidadAVender + 
+    ". Solicitado: " + descontarStock + 
                 " | Disponible: " + p.getStock());
     }
     // si hay stock vendo
     int stockActual = p.getStock();
-    p.setStock(stockActual - cantidadAVender);
-    System.out.println("Venta exitosa: " + cantidadAVender + " unidad(es) de " + p.nombre);
+    p.setStock(stockActual - descontarStock);
+    System.out.println("Venta exitosa: " + descontarStock + " unidad(es) de " + p.nombre);
     }
-
-    public static void actualizarDatos(Producto p, String nuevoNombre, double nuevoPrecio, int nuevoStock) {
-    // Usamos el objeto 'p' que recibimos por parámetro
-        p.nombre = nuevoNombre; 
-        p.setPrecio(nuevoPrecio);
-        p.setStock(nuevoStock);
-        
-    System.out.println("Producto Actualizado: " + p.nombre);
-    }
-
         
 }
 

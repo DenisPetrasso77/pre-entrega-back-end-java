@@ -42,7 +42,7 @@ public class Main {
                 } 
             catch (NumberFormatException e) { 
                 
-                System.out.println("\n[!] Error: '" + e.getMessage() + "' no es un número válido.");
+                System.out.println("\nError: no es un número válido.");
                 System.out.println("Por favor, elija una opción del 1 al 8.");
                 opcion = 0;
             }
@@ -68,7 +68,7 @@ public class Main {
                     miPedido.realizarVenta(leer);
                     break;
                 case 7:
-                    miPedido.mostrarPedidosRealizados();
+                    miPedido.mostrarPedidosRealizados(leer);
                     break;
                   case 8:
                     System.out.println("Saliendo del sistema... ¡Chau!");

@@ -7,7 +7,6 @@ public class LineaPedido {
     public Producto producto;
     public int cantidad;
 
-    // El nombre acá tiene que ser IDÉNTICO al de la clase arriba
     public LineaPedido(Producto producto, int cantidad) {
         this.producto = producto;
         this.cantidad = cantidad;

@@ -52,7 +52,7 @@ public class Producto {
             contadorProductos++;
         }
 
-        //Re escribimo el metodo ToString de fabrica para esta clase 
+        //Reescribo el metodo ToString de fabrica para esta clase 
         @Override
         public String toString() {
         return "ID: " + id + "| Nombre: " + nombre + " | Precio: $" + precio + " |  Stock: " + stock + " | Categoria: " + categoria ;
